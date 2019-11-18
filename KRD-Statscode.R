@@ -2,21 +2,16 @@ initialize <- function() {
     library(ggplot2)
     library(dplyr)
     library(gtools)
+    library(readr)
+    library(magrittr)
 }
-
-KRDstats <- read_csv("KRDstats.csv", col_types = cols(Blocker1 = col_number(), 
-    +         Blocker2 = col_number(), Blocker3 = col_number(), 
-    +         Blocker4 = col_number(), Date = col_date(format = "%m/%d/%Y"), 
-    +         Jammer = col_character(), PointsAgainst = col_number(), 
-    +         PointsFor = col_number(), TimeToLead = col_number()), 
-    +     na = "NA")
 
 CleanJammerData <- function(stats) {
     return(stats %>% filter(Lead==TRUE))
 }
 
-ShowJammerLeadData <- function() {
-    aggregate(TimeToLead ~ Jammer, JammerLeadData, weighted.mean)
+ShowJammerData <- function(stats) {
+    stats %>% group_by(Jammer)
 }
 
 JammerLeadPerc <- function(jammers){
@@ -65,7 +60,7 @@ CompleteJammerData <- function(jammers) {
     JammerDataFrame$PointDiff <- JammerPointDiff(jammers)
     JammerDataFrame$LeadPerc <- JammerLeadPerc(jammers)
     JammerDataFrame$LeadTime <- JammerLeadTime(jammers)
-    JammerDataFrame <- JammerDataFrame[order(JammerDataFrame$PointDiff), ]
+    JammerDataFrame %>% order(JammerDataFrame$PointDiff)
     return(JammerDataFrame)
 }
 
@@ -115,3 +110,15 @@ CompleteBlockerData <- function(blockers) {
     Trios <- Trios %>% arrange(desc(PointDiff))
     return(Trios)
 }
+
+initialize()
+
+KRDstats <- read_csv("C:/Users/cathe/Documents/GitHub/KRD-Stats/KRDstats.csv", col_types = cols(Blocker1 = col_number(), Blocker2 = col_number(),
+                                                      Blocker3 = col_number(), Blocker4 = col_number(), 
+                                                      Date = col_date(format = "%m/%d/%Y"), Jammer = col_character(), 
+                                                      PointsAgainst = col_number(), PointsFor = col_number(), 
+                                                      TimeToLead = col_number()), na = "NA")
+
+JammerLeadData <- CleanJammerData(KRDstats)
+#JammerLeadData %<>% CleanJammerData(KRDstats) %>% 
+ShowJammerLeadData()
