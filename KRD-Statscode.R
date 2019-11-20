@@ -11,15 +11,16 @@ CleanJammerData <- function(stats) {
 }
 
 ShowJammerLeadData <- function(stats) {
+    #group_by() doesn't seem to work here. Do Jammers need to be a different data type?
     stats %>% group_by(Jammer) %>% summarize(TimeToLead = weighted.mean(TimeToLead, na.rm=TRUE)) %>% arrange(TimeToLead)
 }
 
-JammerLeadPerc <- function(jammers){
+JammerLeadPerc <- function(stats, jammers){
     #make jammer numbers into strings
     #for each jammer
     #make temp true count
     #make temp false count
-    #test for jammer in KRDstats
+    #test for jammer in stats
     #if $Lead == True
     #truecount++
     #elseif #Lead == false
